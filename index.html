@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>교육 신청 - SCK SUPPORT CENTER</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        /* SCK Header - 실제 디자인 복제 */
+        .sck-header {
+            background: #1a1a1a;
+            color: white;
+            padding: 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sck-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 16px;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        .logo-text {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .logo-divider {
+            color: #666;
+            font-size: 20px;
+            font-weight: 300;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .header-btn {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .header-btn:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.5);
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.85), rgba(26, 26, 26, 0.65)), 
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/></pattern></defs><rect width="1200" height="400" fill="url(%23grid)"/></svg>');
+            background-size: cover;
+            background-position: center;
+            padding: 80px 30px;
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .hero-section h1 {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: -0.5px;
+        }
+
+        .hero-search {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .hero-search input {
+            width: 100%;
+            padding: 16px 20px 16px 50px;
+            border: none;
+            border-radius: 4px;
+            font-size: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .hero-search::before {
+            content: "🔍";
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+            display: flex;
+            gap: 0;
+            border-bottom: 2px solid #e5e5e5;
+            margin-bottom: 30px;
+            background: white;
+        }
+
+        .nav-tab {
+            padding: 18px 32px;
+            color: #666;
+            text-decoration: none;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .nav-tab:hover {
+            color: #1a1a1a;
+            background: #f8f8f8;
+        }
+
+        .nav-tab.active {
+            color: #1a1a1a;
+            font-weight: 600;
+        }
+
+        .nav-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #1a1a1a;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px 60px;
+        }
+
+        .content-section {
+            background: white;
+            padding: 35px;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .section-title {
+            font-size: 22px;
+            color: #1a1a1a;
+            font-weight: 600;
+        }
+
+        /* Calendar */
+        .calendar-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .sck-btn {
+            background: #1a1a1a;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .sck-btn:hover {
+            background: #333;
+        }
+
+        .sck-btn-secondary {
+            background: white;
+            color: #1a1a1a;
+            border: 1px solid #ddd;
+        }
+
+        .sck-btn-secondary:hover {
+            background: #f5f5f5;
+        }
+
+        .current-month {
+            font-size: 17px;
+            font-weight: 600;
+            min-width: 140px;
+            text-align: center;
+            color: #1a1a1a;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .calendar-day-header {
+            text-align: center;
+            font-weight: 600;
+            padding: 12px;
+            color: #666;
+            font-size: 13px;
+            background: #f8f8f8;
+            border-radius: 3px;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            border: 1px solid #e5e5e5;
+            border-radius: 4px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            min-height: 100px;
+            background: white;
+        }
+
+        .calendar-day:hover {
+            border-color: #1a1a1a;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .calendar-day.other-month {
+            background: #fafafa;
+            color: #bbb;
+        }
+
+        .day-number {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .day-event {
+            background: #1a1a1a;
+            color: white;
+            padding: 3px 7px;
+            border-radius: 3px;
+            font-size: 11px;
+            margin-bottom: 3px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .day-event.full {
+            background: #dc3545;
+        }
+
+        /* Training Cards - KB 스타일 */
+        .kb-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .kb-card {
+            background: white;
+            border: 1px solid #e5e5e5;
+            border-radius: 4px;
+            padding: 30px;
+            transition: all 0.3s;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .kb-card:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            transform: translateY(-3px);
+            border-color: #1a1a1a;
+        }
+
+        .card-status {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .card-status.open {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .card-status.closed {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 15px;
+        }
+
+        .card-info {
+            text-align: left;
+            margin: 20px 0;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .capacity-box {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f8f8;
+            border-radius: 4px;
+        }
+
+        .capacity-text {
+            font-size: 14px;
+            color: #1a1a1a;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #1a1a1a;
+            transition: width 0.3s;
+        }
+
+        .progress-fill.full {
+            background: #dc3545;
+        }
+
+        .apply-button {
+            width: 100%;
+            background: #1a1a1a;
+            border: none;
+            color: white;
+            padding: 12px;
+            border-radius: 3px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .apply-button:hover:not(:disabled) {
+            background: #333;
+        }
+
+        .apply-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 4px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            background: #1a1a1a;
+            color: white;
+            padding: 24px 30px;
+            border-radius: 4px 4px 0 0;
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #1a1a1a;
+            font-size: 14px;
+        }
+
+        .required {
+            color: #dc3545;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #1a1a1a;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        .modal-footer {
+            padding: 20px 30px;
+            border-top: 1px solid #e5e5e5;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .success-alert {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 16px;
+            border-radius: 4px;
+            margin-bottom: 25px;
+            display: none;
+        }
+
+        .success-alert.show {
+            display: block;
+        }
+
+        /* Admin Dashboard */
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 25px;
+            margin-bottom: 35px;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid #e5e5e5;
+            padding: 30px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        .stat-value {
+            font-size: 42px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        .data-table th {
+            background: #f8f8f8;
+            padding: 16px 18px;
+            text-align: left;
+            font-weight: 600;
+            color: #1a1a1a;
+            border-bottom: 2px solid #e5e5e5;
+            font-size: 14px;
+        }
+
+        .data-table td {
+            padding: 16px 18px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .data-table tr:hover {
+            background: #fafafa;
+        }
+
+        .action-btn {
+            padding: 6px 14px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 13px;
+            margin-right: 6px;
+            border: 1px solid;
+            transition: all 0.2s;
+        }
+
+        .btn-view {
+            background: white;
+            border-color: #1a1a1a;
+            color: #1a1a1a;
+        }
+
+        .btn-view:hover {
+            background: #1a1a1a;
+            color: white;
+        }
+
+        .btn-delete {
+            background: white;
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+
+        .btn-delete:hover {
+            background: #dc3545;
+            color: white;
+        }
+
+        /* Admin Login */
+        .admin-login-box {
+            max-width: 400px;
+            margin: 50px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .admin-login-box h2 {
+            font-size: 24px;
+            margin-bottom: 25px;
+            color: #1a1a1a;
+            text-align: center;
+        }
+
+        .login-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 3px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .login-error.show {
+            display: block;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 12px 20px;
+            }
+
+            .logo-text {
+                font-size: 18px;
+            }
+
+            .header-actions {
+                gap: 8px;
+            }
+
+            .header-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+
+            .hero-section {
+                padding: 50px 20px;
+            }
+
+            .hero-section h1 {
+                font-size: 28px;
+            }
+
+            .nav-tabs {
+                padding: 0 15px;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+
+            .nav-tab {
+                padding: 15px 20px;
+                font-size: 14px;
+            }
+
+            .main-content {
+                padding: 0 15px 40px;
+            }
+
+            .content-section {
+                padding: 25px 20px;
+            }
+
+            .kb-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .calendar-day {
+                min-height: 80px;
+                padding: 6px;
+            }
+
+            .admin-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- SCK Header -->
+    <div class="sck-header">
+        <div class="header-container">
+            <div class="sck-logo">
+                <span class="logo-text">SCK</span>
+                <span class="logo-divider">|</span>
+                <span>SUPPORT CENTER</span>
+            </div>
+            <div class="header-actions">
+                <a href="https://support.sckcorp.co.kr/home/" class="header-btn">홈으로 돌아가기</a>
+                <a href="https://support.sckcorp.co.kr/new/" class="header-btn">지식 문서 검색</a>
+                <button class="header-btn" id="admin-login-btn" onclick="showAdminLogin()">로그인</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <h1>교육 프로그램</h1>
+        <div class="hero-search">
+            <input type="text" placeholder="찾으시는 교육을 검색하세요" id="search-input" onkeyup="searchTrainings()">
+        </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="nav-tabs">
+        <button class="nav-tab active" onclick="showView('calendar')">교육 일정</button>
+        <button class="nav-tab" onclick="showView('list')">전체 교육</button>
+        <button class="nav-tab admin-only" style="display:none;" onclick="showView('admin')">관리</button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div id="success-alert" class="success-alert">
+            <strong>✓ 완료!</strong> <span id="success-message"></span>
+        </div>
+
+        <!-- Calendar View -->
+        <div id="calendar-view" class="view-section">
+            <div class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">교육 일정 달력</h2>
+                    <div class="calendar-controls">
+                        <button class="sck-btn sck-btn-secondary" onclick="changeMonth(-1)">◀ 이전</button>
+                        <span class="current-month" id="current-month"></span>
+                        <button class="sck-btn sck-btn-secondary" onclick="changeMonth(1)">다음 ▶</button>
+                    </div>
+                </div>
+                <div class="calendar-grid" id="calendar-grid"></div>
+            </div>
+        </div>
+
+        <!-- List View -->
+        <div id="list-view" class="view-section" style="display:none;">
+            <div class="content-section">
+                <h2 class="section-title" style="margin-bottom:30px;">모든 제조사 교육</h2>
+                <div class="kb-grid" id="training-list"></div>
+            </div>
+        </div>
+
+        <!-- Admin View -->
+        <div id="admin-view" class="view-section" style="display:none;">
+            <div class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">관리 대시보드</h2>
+                    <button class="sck-btn" onclick="showAddTrainingModal()">+ 새 교육 등록</button>
+                </div>
+
+                <div class="admin-stats" id="admin-stats"></div>
+
+                <h3 style="margin:35px 0 20px 0; font-size:20px; color:#1a1a1a; font-weight:600;">교육 목록</h3>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>교육명</th>
+                            <th>일시</th>
+                            <th>장소</th>
+                            <th>신청/정원</th>
+                            <th>상태</th>
+                            <th>관리</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-training-list"></tbody>
+                </table>
+
+                <h3 style="margin:45px 0 20px 0; font-size:20px; color:#1a1a1a; font-weight:600;">신청자 목록</h3>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>이름</th>
+                            <th>이메일</th>
+                            <th>전화번호</th>
+                            <th>소속</th>
+                            <th>신청일</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-application-list"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Admin Login View -->
+        <div id="admin-login-view" class="view-section" style="display:none;">
+            <div class="admin-login-box">
+                <h2>관리자 로그인</h2>
+                <div id="login-error" class="login-error"></div>
+                <form onsubmit="handleAdminLogin(event)">
+                    <div class="form-group">
+                        <label class="form-label">아이디</label>
+                        <input type="text" class="form-input" id="admin-username" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">비밀번호</label>
+                        <input type="password" class="form-input" id="admin-password" required>
+                    </div>
+                    <button type="submit" class="sck-btn" style="width:100%; margin-top:10px;">로그인</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Modal -->
+    <div id="application-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modal-title">교육 신청</h2>
+            </div>
+            <div class="modal-body">
+                <form id="application-form">
+                    <div class="form-group">
+                        <label class="form-label">이름 <span class="required">*</span></label>
+                        <input type="text" class="form-input" name="name" required placeholder="홍길동">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">이메일 <span class="required">*</span></label>
+                        <input type="email" class="form-input" name="email" required placeholder="example@sckcorp.co.kr">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">전화번호 <span class="required">*</span></label>
+                        <input type="tel" class="form-input" name="phone" required placeholder="010-1234-5678">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">소속 부서</label>
+                        <input type="text" class="form-input" name="organization" placeholder="예: 개발팀, 영업부">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">직급/직책</label>
+                        <input type="text" class="form-input" name="position" placeholder="예: 대리, 과장">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">특이사항 / 문의사항</label>
+                        <textarea class="form-textarea" name="notes" placeholder="교육에 대해 궁금한 점이나 전달사항을 입력해주세요"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="sck-btn sck-btn-secondary" onclick="closeModal()">취소</button>
+                <button class="sck-btn" onclick="submitApplication()">신청하기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Training Modal -->
+    <div id="add-training-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>새 교육 등록</h2>
+            </div>
+            <div class="modal-body">
+                <form id="add-training-form">
+                    <div class="form-group">
+                        <label class="form-label">교육명 <span class="required">*</span></label>
+                        <input type="text" class="form-input" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">교육 설명 <span class="required">*</span></label>
+                        <textarea class="form-textarea" name="description" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">날짜 <span class="required">*</span></label>
+                        <input type="date" class="form-input" name="date" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">시작 시간 <span class="required">*</span></label>
+                        <input type="time" class="form-input" name="startTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">종료 시간 <span class="required">*</span></label>
+                        <input type="time" class="form-input" name="endTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">장소 <span class="required">*</span></label>
+                        <input type="text" class="form-input" name="location" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">강사 <span class="required">*</span></label>
+                        <input type="text" class="form-input" name="instructor" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">최대 인원 <span class="required">*</span></label>
+                        <input type="number" class="form-input" name="maxParticipants" required min="1" value="30">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="sck-btn sck-btn-secondary" onclick="closeAddTrainingModal()">취소</button>
+                <button class="sck-btn" onclick="submitNewTraining()">등록하기</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 관리자 인증 상태
+        let isAdmin = false;
+
+        // 샘플 데이터
+        let trainings = [
+            {
+                id: '1',
+                title: 'Adobe Creative Suite 기초',
+                description: 'Photoshop, Illustrator 기본 활용법',
+                date: '2026-02-15',
+                startTime: '14:00',
+                endTime: '17:00',
+                location: 'SCK 본사 교육장',
+                instructor: '김어도비',
+                maxParticipants: 30,
+                currentParticipants: 18,
+                status: 'open'
+            },
+            {
+                id: '2',
+                title: 'Autodesk AutoCAD 심화',
+                description: '3D 모델링 및 렌더링 실습',
+                date: '2026-02-20',
+                startTime: '10:00',
+                endTime: '13:00',
+                location: 'SCK 본사 교육장',
+                instructor: '이캐드',
+                maxParticipants: 25,
+                currentParticipants: 25,
+                status: 'closed'
+            },
+            {
+                id: '3',
+                title: 'Microsoft Azure 클라우드',
+                description: 'Azure 서비스 활용 및 배포',
+                date: '2026-02-25',
+                startTime: '14:00',
+                endTime: '18:00',
+                location: '온라인 (Teams)',
+                instructor: '박애저',
+                maxParticipants: 50,
+                currentParticipants: 32,
+                status: 'open'
+            },
+            {
+                id: '4',
+                title: 'AhnLab V3 보안 솔루션',
+                description: '기업용 보안 관리 실무',
+                date: '2026-02-28',
+                startTime: '13:00',
+                endTime: '16:00',
+                location: 'SCK 본사 교육장',
+                instructor: '최안랩',
+                maxParticipants: 20,
+                currentParticipants: 15,
+                status: 'open'
+            }
+        ];
+
+        let applications = [];
+        let currentDate = new Date();
+        let selectedTrainingId = null;
+
+        // 관리자 로그인 처리
+        function showAdminLogin() {
+            if (isAdmin) {
+                // 이미 로그인된 경우 로그아웃
+                if (confirm('로그아웃 하시겠습니까?')) {
+                    isAdmin = false;
+                    updateAdminUI();
+                    showView('calendar');
+                    showSuccess('로그아웃되었습니다.');
+                }
+            } else {
+                // 로그인 화면 표시
+                hideAllViews();
+                document.getElementById('admin-login-view').style.display = 'block';
+            }
+        }
+
+        function handleAdminLogin(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('admin-username').value;
+            const password = document.getElementById('admin-password').value;
+            
+            // 실제로는 서버 인증을 해야 하지만, 데모에서는 간단히 처리
+            // 예시: admin / admin123
+            if (username === 'admin' && password === 'admin123') {
+                isAdmin = true;
+                updateAdminUI();
+                showView('admin');
+                showSuccess('관리자로 로그인되었습니다.');
+            } else {
+                const errorDiv = document.getElementById('login-error');
+                errorDiv.textContent = '아이디 또는 비밀번호가 올바르지 않습니다.';
+                errorDiv.classList.add('show');
+                setTimeout(() => errorDiv.classList.remove('show'), 3000);
+            }
+        }
+
+        function updateAdminUI() {
+            // 관리 탭 표시/숨김
+            const adminTabs = document.querySelectorAll('.admin-only');
+            adminTabs.forEach(tab => {
+                tab.style.display = isAdmin ? 'block' : 'none';
+            });
+
+            // 로그인 버튼 텍스트 변경
+            const loginBtn = document.getElementById('admin-login-btn');
+            loginBtn.textContent = isAdmin ? '로그아웃' : '로그인';
+        }
+
+        // 달력 렌더링
+        function renderCalendar() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            
+            document.getElementById('current-month').textContent = 
+                `${year}년 ${month + 1}월`;
+            
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const startingDay = firstDay.getDay();
+            
+            let html = '';
+            
+            ['일', '월', '화', '수', '목', '금', '토'].forEach(day => {
+                html += `<div class="calendar-day-header">${day}</div>`;
+            });
+            
+            const prevMonthLastDay = new Date(year, month, 0).getDate();
+            for (let i = startingDay - 1; i >= 0; i--) {
+                const date = new Date(year, month - 1, prevMonthLastDay - i);
+                html += renderCalendarDay(date, false);
+            }
+            
+            for (let i = 1; i <= daysInMonth; i++) {
+                const date = new Date(year, month, i);
+                html += renderCalendarDay(date, true);
+            }
+            
+            const remaining = 42 - (startingDay + daysInMonth);
+            for (let i = 1; i <= remaining; i++) {
+                const date = new Date(year, month + 1, i);
+                html += renderCalendarDay(date, false);
+            }
+            
+            document.getElementById('calendar-grid').innerHTML = html;
+        }
+
+        function renderCalendarDay(date, isCurrentMonth) {
+            const dateStr = date.toISOString().split('T')[0];
+            const dayTrainings = trainings.filter(t => t.date === dateStr);
+            
+            let eventsHtml = '';
+            dayTrainings.forEach(training => {
+                const isFull = training.currentParticipants >= training.maxParticipants;
+                eventsHtml += `
+                    <div class="day-event ${isFull ? 'full' : ''}" 
+                         onclick="openApplicationModal('${training.id}')">
+                        ${training.title}
+                    </div>
+                `;
+            });
+            
+            return `
+                <div class="calendar-day ${!isCurrentMonth ? 'other-month' : ''}">
+                    <div class="day-number">${date.getDate()}</div>
+                    ${eventsHtml}
+                </div>
+            `;
+        }
+
+        // 교육 목록 렌더링
+        function renderTrainingList() {
+            const html = trainings.map(training => {
+                const percentage = (training.currentParticipants / training.maxParticipants) * 100;
+                const isFull = training.currentParticipants >= training.maxParticipants;
+                
+                return `
+                    <div class="kb-card" onclick="openApplicationModal('${training.id}')">
+                        <span class="card-status ${training.status}">
+                            ${training.status === 'open' ? '신청가능' : '마감'}
+                        </span>
+                        <div class="card-title">${training.title}</div>
+                        <div class="card-info">
+                            <div class="info-row">
+                                <span>📅</span>
+                                <span>${training.date} ${training.startTime} - ${training.endTime}</span>
+                            </div>
+                            <div class="info-row">
+                                <span>📍</span>
+                                <span>${training.location}</span>
+                            </div>
+                            <div class="info-row">
+                                <span>👨‍🏫</span>
+                                <span>${training.instructor}</span>
+                            </div>
+                            <div class="info-row">
+                                <span>📝</span>
+                                <span>${training.description}</span>
+                            </div>
+                        </div>
+                        <div class="capacity-box">
+                            <div class="capacity-text">
+                                ${training.currentParticipants} / ${training.maxParticipants}명 신청
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-fill ${isFull ? 'full' : ''}" 
+                                     style="width: ${percentage}%"></div>
+                            </div>
+                        </div>
+                        <button class="apply-button" 
+                                onclick="event.stopPropagation(); openApplicationModal('${training.id}')"
+                                ${isFull || training.status === 'closed' ? 'disabled' : ''}>
+                            ${isFull ? '정원 마감' : training.status === 'closed' ? '마감됨' : '신청하기'}
+                        </button>
+                    </div>
+                `;
+            }).join('');
+            
+            document.getElementById('training-list').innerHTML = html;
+        }
+
+        // 관리자 뷰 렌더링
+        function renderAdminView() {
+            if (!isAdmin) return;
+
+            const totalTrainings = trainings.length;
+            const openTrainings = trainings.filter(t => t.status === 'open').length;
+            const totalApplications = applications.length;
+            const totalCapacity = trainings.reduce((sum, t) => sum + t.maxParticipants, 0);
+            
+            document.getElementById('admin-stats').innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-label">전체 교육</div>
+                    <div class="stat-value">${totalTrainings}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">신청 가능</div>
+                    <div class="stat-value">${openTrainings}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">총 신청자</div>
+                    <div class="stat-value">${totalApplications}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">총 수용인원</div>
+                    <div class="stat-value">${totalCapacity}</div>
+                </div>
+            `;
+            
+            const trainingRows = trainings.map(t => `
+                <tr>
+                    <td>${t.title}</td>
+                    <td>${t.date} ${t.startTime}</td>
+                    <td>${t.location}</td>
+                    <td>${t.currentParticipants} / ${t.maxParticipants}</td>
+                    <td><span class="card-status ${t.status}">${t.status === 'open' ? '진행중' : '마감'}</span></td>
+                    <td>
+                        <button class="action-btn btn-view">상세</button>
+                        <button class="action-btn btn-delete" onclick="deleteTraining('${t.id}')">삭제</button>
+                    </td>
+                </tr>
+            `).join('');
+            
+            document.getElementById('admin-training-list').innerHTML = trainingRows;
+            
+            const applicationRows = applications.length === 0 ? 
+                '<tr><td colspan="5" style="text-align:center; padding:40px; color:#999;">아직 신청자가 없습니다.</td></tr>' :
+                applications.map(app => `
+                    <tr>
+                        <td>${app.name}</td>
+                        <td>${app.email}</td>
+                        <td>${app.phone}</td>
+                        <td>${app.organization || '-'}</td>
+                        <td>${new Date(app.appliedAt).toLocaleDateString('ko-KR')}</td>
+                    </tr>
+                `).join('');
+            
+            document.getElementById('admin-application-list').innerHTML = applicationRows;
+        }
+
+        // 뷰 전환
+        function hideAllViews() {
+            document.querySelectorAll('.view-section').forEach(v => v.style.display = 'none');
+        }
+
+        function showView(viewName) {
+            if (viewName === 'admin' && !isAdmin) {
+                alert('관리자 권한이 필요합니다.');
+                return;
+            }
+
+            hideAllViews();
+            document.querySelectorAll('.nav-tab').forEach(n => n.classList.remove('active'));
+            
+            if (viewName === 'calendar') {
+                document.getElementById('calendar-view').style.display = 'block';
+                document.querySelectorAll('.nav-tab')[0].classList.add('active');
+                renderCalendar();
+            } else if (viewName === 'list') {
+                document.getElementById('list-view').style.display = 'block';
+                document.querySelectorAll('.nav-tab')[1].classList.add('active');
+                renderTrainingList();
+            } else if (viewName === 'admin') {
+                document.getElementById('admin-view').style.display = 'block';
+                document.querySelectorAll('.nav-tab')[2].classList.add('active');
+                renderAdminView();
+            }
+        }
+
+        function changeMonth(delta) {
+            currentDate.setMonth(currentDate.getMonth() + delta);
+            renderCalendar();
+        }
+
+        function openApplicationModal(trainingId) {
+            selectedTrainingId = trainingId;
+            const training = trainings.find(t => t.id === trainingId);
+            
+            if (!training || training.currentParticipants >= training.maxParticipants) {
+                return;
+            }
+            
+            document.getElementById('modal-title').textContent = training.title + ' - 신청';
+            document.getElementById('application-modal').classList.add('show');
+            document.getElementById('application-form').reset();
+        }
+
+        function closeModal() {
+            document.getElementById('application-modal').classList.remove('show');
+        }
+
+        function submitApplication() {
+            const form = document.getElementById('application-form');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            
+            const formData = new FormData(form);
+            const application = {
+                id: Date.now().toString(),
+                trainingId: selectedTrainingId,
+                name: formData.get('name'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                organization: formData.get('organization'),
+                position: formData.get('position'),
+                notes: formData.get('notes'),
+                appliedAt: new Date().toISOString()
+            };
+            
+            applications.push(application);
+            
+            trainings = trainings.map(t => {
+                if (t.id === selectedTrainingId) {
+                    const newCount = t.currentParticipants + 1;
+                    return {
+                        ...t,
+                        currentParticipants: newCount,
+                        status: newCount >= t.maxParticipants ? 'closed' : 'open'
+                    };
+                }
+                return t;
+            });
+            
+            closeModal();
+            showSuccess('교육 신청이 완료되었습니다!');
+            renderCalendar();
+            renderTrainingList();
+        }
+
+        function showAddTrainingModal() {
+            if (!isAdmin) {
+                alert('관리자 권한이 필요합니다.');
+                return;
+            }
+            document.getElementById('add-training-modal').classList.add('show');
+            document.getElementById('add-training-form').reset();
+        }
+
+        function closeAddTrainingModal() {
+            document.getElementById('add-training-modal').classList.remove('show');
+        }
+
+        function submitNewTraining() {
+            const form = document.getElementById('add-training-form');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            
+            const formData = new FormData(form);
+            const training = {
+                id: Date.now().toString(),
+                title: formData.get('title'),
+                description: formData.get('description'),
+                date: formData.get('date'),
+                startTime: formData.get('startTime'),
+                endTime: formData.get('endTime'),
+                location: formData.get('location'),
+                instructor: formData.get('instructor'),
+                maxParticipants: parseInt(formData.get('maxParticipants')),
+                currentParticipants: 0,
+                status: 'open'
+            };
+            
+            trainings.push(training);
+            closeAddTrainingModal();
+            showSuccess('새 교육이 등록되었습니다!');
+            renderAdminView();
+        }
+
+        function deleteTraining(id) {
+            if (!isAdmin) return;
+            
+            if (confirm('정말 삭제하시겠습니까?')) {
+                trainings = trainings.filter(t => t.id !== id);
+                applications = applications.filter(a => a.trainingId !== id);
+                showSuccess('교육이 삭제되었습니다.');
+                renderAdminView();
+            }
+        }
+
+        function showSuccess(message) {
+            document.getElementById('success-message').textContent = message;
+            document.getElementById('success-alert').classList.add('show');
+            setTimeout(() => {
+                document.getElementById('success-alert').classList.remove('show');
+            }, 4000);
+        }
+
+        function searchTrainings() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const filtered = trainings.filter(t => 
+                t.title.toLowerCase().includes(searchTerm) ||
+                t.description.toLowerCase().includes(searchTerm) ||
+                t.instructor.toLowerCase().includes(searchTerm)
+            );
+            
+            if (searchTerm) {
+                // 검색 결과 표시
+                console.log('검색 결과:', filtered.length);
+            }
+        }
+
+        // 초기화
+        updateAdminUI();
+        renderCalendar();
+    </script>
+</body>
+</html>
