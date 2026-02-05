@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>교육 신청 - SCK SUPPORT CENTER</title>
+    
+    <!-- 암호화 라이브러리 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    
+    <!-- 엑셀 라이브러리 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -17,18 +24,53 @@
             min-height: 100vh;
         }
 
-        /* SCK Header - 실제 디자인 복제 */
+        /* Loading Spinner */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #1a1a1a;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* SCK Header */
         .sck-header {
             background: #1a1a1a;
             color: white;
             padding: 0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: none;
+            width: 100%;
+            position: relative;
+            height: 60px;
         }
 
         .header-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 15px 30px;
+            width: 100%;
+            height: 60px;
+            padding: 0 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -37,100 +79,121 @@
         .sck-logo {
             display: flex;
             align-items: center;
-            gap: 15px;
+            flex-shrink: 0;
+        }
+
+        .hf-header_logo-wrap {
+            display: flex;
+            align-items: center;
+            height: 60px;
+        }
+
+        .hf-header_logo-wrap.hf-mod-mobile {
+            display: none;
+        }
+
+        .hf-header_logo {
+            height: 35px;
+            width: auto;
+        }
+
+        .support-center-text {
+            color: white;
             font-size: 16px;
             font-weight: 400;
+            margin-left: 20px;
             letter-spacing: 0.5px;
-        }
-
-        .logo-text {
-            font-size: 22px;
-            font-weight: 700;
-            letter-spacing: 2px;
-        }
-
-        .logo-divider {
-            color: #666;
-            font-size: 20px;
-            font-weight: 300;
         }
 
         .header-actions {
             display: flex;
-            gap: 15px;
+            gap: 2px;
             align-items: center;
+            flex-shrink: 0;
+            margin-left: auto;
         }
 
         .header-btn {
             background: transparent;
-            border: 1px solid rgba(255,255,255,0.3);
+            border: none;
             color: white;
-            padding: 8px 18px;
-            border-radius: 3px;
+            padding: 6px 17px;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 15px;
+            font-weight: 700;
             transition: all 0.2s;
             text-decoration: none;
             display: inline-block;
+            margin: 2px;
         }
 
         .header-btn:hover {
             background: rgba(255,255,255,0.1);
-            border-color: rgba(255,255,255,0.5);
         }
 
         /* Hero Section */
         .hero-section {
-            background: linear-gradient(135deg, rgba(26, 26, 26, 0.85), rgba(26, 26, 26, 0.65)), 
-                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/></pattern></defs><rect width="1200" height="400" fill="url(%23grid)"/></svg>');
+            background-image: url(https://i2.wp.com/www.sckcorp.co.kr/wp-content/uploads/2019/07/m_visual4.png?fit=1920%2C1181&ssl=1);
             background-size: cover;
-            background-position: center;
-            padding: 80px 30px;
+            background-position: center top;
+            background-repeat: no-repeat;
+            background-color: #fff;
+            height: 420px;
+            padding: 100px 0;
             text-align: center;
-            color: white;
+            color: #1a1a1a;
             margin-bottom: 40px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         .hero-section h1 {
-            font-size: 42px;
+            font-size: 48px;
             font-weight: 700;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             letter-spacing: -0.5px;
+            color: #1a1a1a;
         }
 
         .hero-search {
             max-width: 600px;
+            width: 100%;
             margin: 0 auto;
             position: relative;
+            padding: 0 20px;
         }
 
         .hero-search input {
             width: 100%;
-            padding: 16px 20px 16px 50px;
+            padding: 20px 35px 20px 50px;
             border: none;
             border-radius: 4px;
-            font-size: 15px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            font-size: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            background: white;
         }
 
         .hero-search::before {
             content: "🔍";
             position: absolute;
-            left: 20px;
+            left: 35px;
             top: 50%;
             transform: translateY(-50%);
             font-size: 18px;
+            color: #999;
         }
 
         /* Navigation Tabs */
         .nav-tabs {
             max-width: 1400px;
-            margin: 0 auto;
+            margin: 0 auto 30px auto;
             padding: 0 30px;
             display: flex;
             gap: 0;
             border-bottom: 2px solid #e5e5e5;
-            margin-bottom: 30px;
             background: white;
         }
 
@@ -220,6 +283,11 @@
             background: #333;
         }
 
+        .sck-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
         .sck-btn-secondary {
             background: white;
             color: #1a1a1a;
@@ -257,14 +325,17 @@
 
         .calendar-day {
             aspect-ratio: 1;
+            width: 100%;
             border: 1px solid #e5e5e5;
             border-radius: 4px;
             padding: 10px;
             cursor: pointer;
             transition: all 0.2s;
             position: relative;
-            min-height: 100px;
             background: white;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
         .calendar-day:hover {
@@ -299,7 +370,7 @@
             background: #dc3545;
         }
 
-        /* Training Cards - KB 스타일 */
+        /* Training Cards */
         .kb-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -639,31 +710,57 @@
             display: block;
         }
 
+        /* Admin Controls */
+        .admin-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .header-container {
-                padding: 12px 20px;
+                padding: 0 15px;
+                height: 60px;
             }
 
-            .logo-text {
-                font-size: 18px;
+            .hf-header_logo {
+                height: 30px;
+            }
+
+            .hf-header_logo-wrap.hf-mod-desktop {
+                display: none;
+            }
+
+            .hf-header_logo-wrap.hf-mod-mobile {
+                display: flex;
+            }
+
+            .support-center-text {
+                font-size: 14px;
+                margin-left: 10px;
             }
 
             .header-actions {
-                gap: 8px;
+                gap: 0;
             }
 
             .header-btn {
                 padding: 6px 12px;
-                font-size: 12px;
+                font-size: 13px;
             }
 
             .hero-section {
+                height: auto;
                 padding: 50px 20px;
             }
 
             .hero-section h1 {
-                font-size: 28px;
+                font-size: 32px;
+            }
+
+            .hero-search input {
+                padding: 15px 35px 15px 45px;
             }
 
             .nav-tabs {
@@ -690,7 +787,7 @@
             }
 
             .calendar-day {
-                min-height: 80px;
+                aspect-ratio: 1;
                 padding: 6px;
             }
 
@@ -701,17 +798,34 @@
     </style>
 </head>
 <body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+
     <!-- SCK Header -->
     <div class="sck-header">
         <div class="header-container">
             <div class="sck-logo">
-                <span class="logo-text">SCK</span>
-                <span class="logo-divider">|</span>
-                <span>SUPPORT CENTER</span>
+                <div class="hf-header_logo-wrap hf-mod-desktop">
+                    <a href="https://support.sckcorp.co.kr/home/">
+                        <img src="https://s3-us-west-2.amazonaws.com/hf-files-oregon/hdpsckcorp_user_customized/2020/04-24/50981d01-dfd7-4b3a-967f-8c0e98c7932e/SCK_w_small.png" 
+                             class="hf-header_logo" 
+                             alt="SCK 로고">
+                    </a>
+                </div>
+                <div class="hf-header_logo-wrap hf-mod-mobile">
+                    <a href="https://support.sckcorp.co.kr/home/">
+                        <img src="https://s3-us-west-2.amazonaws.com/hf-files-oregon/hdpsckcorp_user_customized/2020/04-24/50981d01-dfd7-4b3a-967f-8c0e98c7932e/SCK_w_small.png" 
+                             class="hf-header_logo hf-mod-mobile-logo" 
+                             alt="SCK 로고">
+                    </a>
+                </div>
+                <span class="support-center-text">SUPPORT CENTER</span>
             </div>
             <div class="header-actions">
-                <a href="https://support.sckcorp.co.kr/home/" class="header-btn">홈으로 돌아가기</a>
-                <a href="https://support.sckcorp.co.kr/new/" class="header-btn">지식 문서 검색</a>
+                <a href="https://support.sckcorp.co.kr/new/" class="header-btn">문의 등록</a>
+                <a href="https://support.sckcorp.co.kr/kb" class="header-btn">지식 문서</a>
                 <button class="header-btn" id="admin-login-btn" onclick="showAdminLogin()">로그인</button>
             </div>
         </div>
@@ -766,7 +880,11 @@
             <div class="content-section">
                 <div class="section-header">
                     <h2 class="section-title">관리 대시보드</h2>
-                    <button class="sck-btn" onclick="showAddTrainingModal()">+ 새 교육 등록</button>
+                    <div class="admin-controls">
+                        <button class="sck-btn" onclick="showAddTrainingModal()">+ 새 교육 등록</button>
+                        <button class="sck-btn" onclick="exportApplicationsToExcel()">📥 엑셀 다운로드</button>
+                        <button class="sck-btn" onclick="logout()">🚪 로그아웃</button>
+                    </div>
                 </div>
 
                 <div class="admin-stats" id="admin-stats"></div>
@@ -790,6 +908,7 @@
                 <table class="data-table">
                     <thead>
                         <tr>
+                            <th>교육명</th>
                             <th>이름</th>
                             <th>이메일</th>
                             <th>전화번호</th>
@@ -809,11 +928,11 @@
                 <div id="login-error" class="login-error"></div>
                 <form onsubmit="handleAdminLogin(event)">
                     <div class="form-group">
-                        <label class="form-label">아이디</label>
-                        <input type="text" class="form-input" id="admin-username" required>
+                        <label class="form-label">이메일 <span class="required">*</span></label>
+                        <input type="email" class="form-input" id="admin-username" required placeholder="admin@sckcorp.co.kr">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">비밀번호</label>
+                        <label class="form-label">비밀번호 <span class="required">*</span></label>
                         <input type="password" class="form-input" id="admin-password" required>
                     </div>
                     <button type="submit" class="sck-btn" style="width:100%; margin-top:10px;">로그인</button>
@@ -913,13 +1032,17 @@
     </div>
 
     <script>
-        // 관리자 인증 상태
+        // 전역 변수
         let isAdmin = false;
+        let trainings = [];
+        let applications = [];
+        let currentDate = new Date();
+        let selectedTrainingId = null;
 
-        // 샘플 데이터
-        let trainings = [
+        // 샘플 데이터 (Firebase 연결 실패 시 사용)
+        const sampleTrainings = [
             {
-                id: '1',
+                id: 'sample-1',
                 title: 'Adobe Creative Suite 기초',
                 description: 'Photoshop, Illustrator 기본 활용법',
                 date: '2026-02-15',
@@ -932,7 +1055,7 @@
                 status: 'open'
             },
             {
-                id: '2',
+                id: 'sample-2',
                 title: 'Autodesk AutoCAD 심화',
                 description: '3D 모델링 및 렌더링 실습',
                 date: '2026-02-20',
@@ -945,7 +1068,7 @@
                 status: 'closed'
             },
             {
-                id: '3',
+                id: 'sample-3',
                 title: 'Microsoft Azure 클라우드',
                 description: 'Azure 서비스 활용 및 배포',
                 date: '2026-02-25',
@@ -956,35 +1079,24 @@
                 maxParticipants: 50,
                 currentParticipants: 32,
                 status: 'open'
-            },
-            {
-                id: '4',
-                title: 'AhnLab V3 보안 솔루션',
-                description: '기업용 보안 관리 실무',
-                date: '2026-02-28',
-                startTime: '13:00',
-                endTime: '16:00',
-                location: 'SCK 본사 교육장',
-                instructor: '최안랩',
-                maxParticipants: 20,
-                currentParticipants: 15,
-                status: 'open'
             }
         ];
 
-        let applications = [];
-        let currentDate = new Date();
-        let selectedTrainingId = null;
+        // Loading 표시/숨김
+        function showLoading() {
+            document.getElementById('loading-overlay').classList.add('show');
+        }
 
-        // 관리자 로그인 처리
+        function hideLoading() {
+            document.getElementById('loading-overlay').classList.remove('show');
+        }
+
+        // 관리자 로그인 표시
         function showAdminLogin() {
             if (isAdmin) {
                 // 이미 로그인된 경우 로그아웃
                 if (confirm('로그아웃 하시겠습니까?')) {
-                    isAdmin = false;
-                    updateAdminUI();
-                    showView('calendar');
-                    showSuccess('로그아웃되었습니다.');
+                    logout();
                 }
             } else {
                 // 로그인 화면 표시
@@ -993,24 +1105,16 @@
             }
         }
 
-        function handleAdminLogin(event) {
-            event.preventDefault();
-            
-            const username = document.getElementById('admin-username').value;
-            const password = document.getElementById('admin-password').value;
-            
-            // 실제로는 서버 인증을 해야 하지만, 데모에서는 간단히 처리
-            // 예시: admin / admin123
-            if (username === 'admin' && password === 'admin123') {
-                isAdmin = true;
-                updateAdminUI();
-                showView('admin');
-                showSuccess('관리자로 로그인되었습니다.');
-            } else {
-                const errorDiv = document.getElementById('login-error');
-                errorDiv.textContent = '아이디 또는 비밀번호가 올바르지 않습니다.';
-                errorDiv.classList.add('show');
-                setTimeout(() => errorDiv.classList.remove('show'), 3000);
+        // 로그아웃
+        async function logout() {
+            if (window.firebaseModules && window.firebaseAuth) {
+                try {
+                    await window.firebaseModules.signOut(window.firebaseAuth);
+                    showSuccess('로그아웃되었습니다.');
+                    showView('calendar');
+                } catch (error) {
+                    console.error('로그아웃 오류:', error);
+                }
             }
         }
 
@@ -1045,18 +1149,25 @@
                 html += `<div class="calendar-day-header">${day}</div>`;
             });
             
+            // 이전 달 날짜
             const prevMonthLastDay = new Date(year, month, 0).getDate();
             for (let i = startingDay - 1; i >= 0; i--) {
                 const date = new Date(year, month - 1, prevMonthLastDay - i);
                 html += renderCalendarDay(date, false);
             }
             
+            // 현재 달 날짜
             for (let i = 1; i <= daysInMonth; i++) {
                 const date = new Date(year, month, i);
                 html += renderCalendarDay(date, true);
             }
             
-            const remaining = 42 - (startingDay + daysInMonth);
+            // 다음 달 날짜 (5주까지만)
+            const totalCellsUsed = startingDay + daysInMonth;
+            const weeksNeeded = Math.ceil(totalCellsUsed / 7);
+            const totalCells = weeksNeeded * 7;
+            const remaining = totalCells - totalCellsUsed;
+            
             for (let i = 1; i <= remaining; i++) {
                 const date = new Date(year, month + 1, i);
                 html += renderCalendarDay(date, false);
@@ -1074,7 +1185,7 @@
                 const isFull = training.currentParticipants >= training.maxParticipants;
                 eventsHtml += `
                     <div class="day-event ${isFull ? 'full' : ''}" 
-                         onclick="openApplicationModal('${training.id}')">
+                         onclick="event.stopPropagation(); openApplicationModal('${training.id}')">
                         ${training.title}
                     </div>
                 `;
@@ -1175,25 +1286,28 @@
                     <td>${t.currentParticipants} / ${t.maxParticipants}</td>
                     <td><span class="card-status ${t.status}">${t.status === 'open' ? '진행중' : '마감'}</span></td>
                     <td>
-                        <button class="action-btn btn-view">상세</button>
                         <button class="action-btn btn-delete" onclick="deleteTraining('${t.id}')">삭제</button>
                     </td>
                 </tr>
             `).join('');
             
-            document.getElementById('admin-training-list').innerHTML = trainingRows;
+            document.getElementById('admin-training-list').innerHTML = trainingRows || '<tr><td colspan="6" style="text-align:center; padding:40px; color:#999;">등록된 교육이 없습니다.</td></tr>';
             
             const applicationRows = applications.length === 0 ? 
-                '<tr><td colspan="5" style="text-align:center; padding:40px; color:#999;">아직 신청자가 없습니다.</td></tr>' :
-                applications.map(app => `
-                    <tr>
-                        <td>${app.name}</td>
-                        <td>${app.email}</td>
-                        <td>${app.phone}</td>
-                        <td>${app.organization || '-'}</td>
-                        <td>${new Date(app.appliedAt).toLocaleDateString('ko-KR')}</td>
-                    </tr>
-                `).join('');
+                '<tr><td colspan="6" style="text-align:center; padding:40px; color:#999;">아직 신청자가 없습니다.</td></tr>' :
+                applications.map(app => {
+                    const training = trainings.find(t => t.id === app.trainingId);
+                    return `
+                        <tr>
+                            <td>${training ? training.title : '-'}</td>
+                            <td>${app.name}</td>
+                            <td>${app.email}</td>
+                            <td>${app.phone}</td>
+                            <td>${app.organization || '-'}</td>
+                            <td>${new Date(app.appliedAt).toLocaleDateString('ko-KR')}</td>
+                        </tr>
+                    `;
+                }).join('');
             
             document.getElementById('admin-application-list').innerHTML = applicationRows;
         }
@@ -1249,46 +1363,6 @@
             document.getElementById('application-modal').classList.remove('show');
         }
 
-        function submitApplication() {
-            const form = document.getElementById('application-form');
-            if (!form.checkValidity()) {
-                form.reportValidity();
-                return;
-            }
-            
-            const formData = new FormData(form);
-            const application = {
-                id: Date.now().toString(),
-                trainingId: selectedTrainingId,
-                name: formData.get('name'),
-                email: formData.get('email'),
-                phone: formData.get('phone'),
-                organization: formData.get('organization'),
-                position: formData.get('position'),
-                notes: formData.get('notes'),
-                appliedAt: new Date().toISOString()
-            };
-            
-            applications.push(application);
-            
-            trainings = trainings.map(t => {
-                if (t.id === selectedTrainingId) {
-                    const newCount = t.currentParticipants + 1;
-                    return {
-                        ...t,
-                        currentParticipants: newCount,
-                        status: newCount >= t.maxParticipants ? 'closed' : 'open'
-                    };
-                }
-                return t;
-            });
-            
-            closeModal();
-            showSuccess('교육 신청이 완료되었습니다!');
-            renderCalendar();
-            renderTrainingList();
-        }
-
         function showAddTrainingModal() {
             if (!isAdmin) {
                 alert('관리자 권한이 필요합니다.');
@@ -1302,45 +1376,6 @@
             document.getElementById('add-training-modal').classList.remove('show');
         }
 
-        function submitNewTraining() {
-            const form = document.getElementById('add-training-form');
-            if (!form.checkValidity()) {
-                form.reportValidity();
-                return;
-            }
-            
-            const formData = new FormData(form);
-            const training = {
-                id: Date.now().toString(),
-                title: formData.get('title'),
-                description: formData.get('description'),
-                date: formData.get('date'),
-                startTime: formData.get('startTime'),
-                endTime: formData.get('endTime'),
-                location: formData.get('location'),
-                instructor: formData.get('instructor'),
-                maxParticipants: parseInt(formData.get('maxParticipants')),
-                currentParticipants: 0,
-                status: 'open'
-            };
-            
-            trainings.push(training);
-            closeAddTrainingModal();
-            showSuccess('새 교육이 등록되었습니다!');
-            renderAdminView();
-        }
-
-        function deleteTraining(id) {
-            if (!isAdmin) return;
-            
-            if (confirm('정말 삭제하시겠습니까?')) {
-                trainings = trainings.filter(t => t.id !== id);
-                applications = applications.filter(a => a.trainingId !== id);
-                showSuccess('교육이 삭제되었습니다.');
-                renderAdminView();
-            }
-        }
-
         function showSuccess(message) {
             document.getElementById('success-message').textContent = message;
             document.getElementById('success-alert').classList.add('show');
@@ -1351,21 +1386,438 @@
 
         function searchTrainings() {
             const searchTerm = document.getElementById('search-input').value.toLowerCase();
-            const filtered = trainings.filter(t => 
-                t.title.toLowerCase().includes(searchTerm) ||
-                t.description.toLowerCase().includes(searchTerm) ||
-                t.instructor.toLowerCase().includes(searchTerm)
-            );
-            
             if (searchTerm) {
-                // 검색 결과 표시
+                const filtered = trainings.filter(t => 
+                    t.title.toLowerCase().includes(searchTerm) ||
+                    t.description.toLowerCase().includes(searchTerm) ||
+                    t.instructor.toLowerCase().includes(searchTerm)
+                );
                 console.log('검색 결과:', filtered.length);
             }
         }
 
         // 초기화
+        trainings = sampleTrainings;
         updateAdminUI();
         renderCalendar();
+        renderTrainingList();
+    </script>
+
+    <!-- ====================================== -->
+    <!-- Firebase SDK 및 통합 스크립트 -->
+    <!-- ====================================== -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, addDoc, getDocs, query, orderBy, deleteDoc, doc, updateDoc, increment, writeBatch } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // ✅ Firebase 설정 완료!
+        const firebaseConfig = {
+            apiKey: "AIzaSyA-a3SdltY3GvezrDOXGipYH3YzMEjMLt4",
+            authDomain: "sckedu-dc00b.firebaseapp.com",
+            projectId: "sckedu-dc00b",
+            storageBucket: "sckedu-dc00b.firebasestorage.app",
+            messagingSenderId: "54569334599",
+            appId: "1:54569334599:web:97b6e95f89e71a13c7be62",
+            measurementId: "G-DFXLWX1P54"
+        };
+
+        // Firebase 초기화
+        let app, auth, db;
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+            console.log('✅ Firebase 초기화 성공');
+        } catch (error) {
+            console.error('❌ Firebase 초기화 실패:', error);
+            alert('Firebase 설정을 확인해주세요. 샘플 데이터로 작동합니다.');
+        }
+
+        // 전역으로 노출
+        window.firebaseAuth = auth;
+        window.firebaseDb = db;
+        window.firebaseModules = {
+            signInWithEmailAndPassword,
+            onAuthStateChanged,
+            signOut,
+            collection,
+            addDoc,
+            getDocs,
+            query,
+            orderBy,
+            deleteDoc,
+            doc,
+            updateDoc,
+            increment,
+            writeBatch
+        };
+
+        // 암호화 설정
+        const ENCRYPTION_KEY = 'SCK-EDUCATION-2026-SECRET-KEY';
+
+        window.encryptData = function(data) {
+            const jsonString = JSON.stringify(data);
+            return CryptoJS.AES.encrypt(jsonString, ENCRYPTION_KEY).toString();
+        };
+
+        window.decryptData = function(encryptedData) {
+            try {
+                const bytes = CryptoJS.AES.decrypt(encryptedData, ENCRYPTION_KEY);
+                const decryptedString = bytes.toString(CryptoJS.enc.Utf8);
+                return JSON.parse(decryptedString);
+            } catch (error) {
+                console.error('복호화 실패:', error);
+                return null;
+            }
+        };
+
+        // 로그인 처리
+        window.handleAdminLogin = async function(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('admin-username').value;
+            const password = document.getElementById('admin-password').value;
+            
+            showLoading();
+            
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                // 성공 시 onAuthStateChanged에서 처리
+            } catch (error) {
+                hideLoading();
+                const errorDiv = document.getElementById('login-error');
+                
+                if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+                    errorDiv.textContent = '이메일 또는 비밀번호가 올바르지 않습니다.';
+                } else if (error.code === 'auth/user-not-found') {
+                    errorDiv.textContent = '등록되지 않은 관리자입니다.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorDiv.textContent = '올바른 이메일 형식이 아닙니다.';
+                } else {
+                    errorDiv.textContent = `로그인 실패: ${error.message}`;
+                }
+                
+                errorDiv.classList.add('show');
+                setTimeout(() => errorDiv.classList.remove('show'), 5000);
+                
+                console.error('로그인 오류:', error);
+            }
+        };
+
+        // 로그인 상태 체크
+        if (auth) {
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    console.log('✅ 로그인됨:', user.email);
+                    window.isAdmin = true;
+                    window.updateAdminUI();
+                    
+                    hideAllViews();
+                    document.getElementById('admin-login-view').style.display = 'none';
+                    
+                    showLoading();
+                    await window.loadTrainings();
+                    await window.loadApplications();
+                    hideLoading();
+                    
+                    showView('admin');
+                    showSuccess(`관리자로 로그인되었습니다 (${user.email})`);
+                    
+                    renderCalendar();
+                    renderTrainingList();
+                    renderAdminView();
+                } else {
+                    console.log('❌ 로그아웃됨');
+                    window.isAdmin = false;
+                    window.updateAdminUI();
+                    window.applications = [];
+                    
+                    hideLoading();
+                    await window.loadTrainings();
+                    renderCalendar();
+                    renderTrainingList();
+                }
+            });
+        }
+
+        // Firestore에서 교육 목록 불러오기
+        window.loadTrainings = async function() {
+            if (!db) {
+                console.log('Firebase 미연결 - 샘플 데이터 사용');
+                return;
+            }
+
+            try {
+                const q = query(collection(db, 'trainings'), orderBy('date', 'asc'));
+                const querySnapshot = await getDocs(q);
+                
+                if (querySnapshot.empty) {
+                    console.log('Firestore에 교육 없음 - 샘플 데이터 사용');
+                    window.trainings = window.sampleTrainings;
+                } else {
+                    window.trainings = querySnapshot.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }));
+                    console.log(`✅ 교육 ${window.trainings.length}개 로드`);
+                }
+            } catch (error) {
+                console.error('❌ 교육 로드 실패:', error);
+                window.trainings = window.sampleTrainings;
+            }
+        };
+
+        // Firestore에서 신청자 목록 불러오기
+        window.loadApplications = async function() {
+            if (!window.isAdmin || !db) return;
+            
+            try {
+                const q = query(collection(db, 'applications'), orderBy('appliedAt', 'desc'));
+                const querySnapshot = await getDocs(q);
+                
+                window.applications = querySnapshot.docs.map(doc => {
+                    const data = doc.data();
+                    const decryptedInfo = window.decryptData(data.encryptedInfo);
+                    
+                    return {
+                        id: doc.id,
+                        trainingId: data.trainingId,
+                        ...decryptedInfo,
+                        appliedAt: data.appliedAt
+                    };
+                });
+                
+                console.log(`✅ 신청자 ${window.applications.length}명 로드`);
+            } catch (error) {
+                console.error('❌ 신청자 로드 실패:', error);
+                window.applications = [];
+            }
+        };
+
+        // 교육 신청 (Firestore + 암호화)
+        window.submitApplication = async function() {
+            const form = document.getElementById('application-form');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            
+            const formData = new FormData(form);
+            const personalInfo = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                organization: formData.get('organization'),
+                position: formData.get('position'),
+                notes: formData.get('notes')
+            };
+            
+            showLoading();
+            
+            try {
+                if (db) {
+                    // Firestore에 저장 (암호화)
+                    const application = {
+                        trainingId: selectedTrainingId,
+                        encryptedInfo: window.encryptData(personalInfo),
+                        appliedAt: new Date().toISOString()
+                    };
+                    
+                    await addDoc(collection(db, 'applications'), application);
+                    
+                    // 교육 인원 증가
+                    const trainingRef = doc(db, 'trainings', selectedTrainingId);
+                    await updateDoc(trainingRef, {
+                        currentParticipants: increment(1)
+                    });
+                    
+                    // 데이터 다시 로드
+                    await window.loadTrainings();
+                    if (window.isAdmin) {
+                        await window.loadApplications();
+                    }
+                } else {
+                    // Firebase 미연결 시 로컬 저장
+                    window.applications.push({
+                        id: Date.now().toString(),
+                        trainingId: selectedTrainingId,
+                        ...personalInfo,
+                        appliedAt: new Date().toISOString()
+                    });
+                    
+                    window.trainings = window.trainings.map(t => {
+                        if (t.id === selectedTrainingId) {
+                            return {
+                                ...t,
+                                currentParticipants: t.currentParticipants + 1
+                            };
+                        }
+                        return t;
+                    });
+                }
+                
+                hideLoading();
+                closeModal();
+                showSuccess('교육 신청이 완료되었습니다!');
+                
+                renderCalendar();
+                renderTrainingList();
+                if (window.isAdmin) {
+                    renderAdminView();
+                }
+                
+            } catch (error) {
+                hideLoading();
+                console.error('신청 실패:', error);
+                alert('신청 중 오류가 발생했습니다: ' + error.message);
+            }
+        };
+
+        // 새 교육 등록 (Firestore)
+        window.submitNewTraining = async function() {
+            if (!window.isAdmin) {
+                alert('관리자 권한이 필요합니다.');
+                return;
+            }
+
+            const form = document.getElementById('add-training-form');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            
+            const formData = new FormData(form);
+            const training = {
+                title: formData.get('title'),
+                description: formData.get('description'),
+                date: formData.get('date'),
+                startTime: formData.get('startTime'),
+                endTime: formData.get('endTime'),
+                location: formData.get('location'),
+                instructor: formData.get('instructor'),
+                maxParticipants: parseInt(formData.get('maxParticipants')),
+                currentParticipants: 0,
+                status: 'open',
+                createdAt: new Date().toISOString()
+            };
+            
+            showLoading();
+            
+            try {
+                if (db) {
+                    await addDoc(collection(db, 'trainings'), training);
+                    await window.loadTrainings();
+                } else {
+                    training.id = Date.now().toString();
+                    window.trainings.push(training);
+                }
+                
+                hideLoading();
+                closeAddTrainingModal();
+                showSuccess('새 교육이 등록되었습니다!');
+                
+                renderCalendar();
+                renderTrainingList();
+                renderAdminView();
+                
+            } catch (error) {
+                hideLoading();
+                console.error('교육 등록 실패:', error);
+                alert('교육 등록 중 오류가 발생했습니다: ' + error.message);
+            }
+        };
+
+        // 교육 삭제 (Firestore)
+        window.deleteTraining = async function(trainingId) {
+            if (!window.isAdmin) return;
+            
+            if (!confirm('정말 삭제하시겠습니까?')) return;
+            
+            showLoading();
+            
+            try {
+                if (db) {
+                    await deleteDoc(doc(db, 'trainings', trainingId));
+                    
+                    // 관련 신청 삭제
+                    const appsQuery = query(collection(db, 'applications'));
+                    const appsSnapshot = await getDocs(appsQuery);
+                    const batch = writeBatch(db);
+                    
+                    appsSnapshot.docs.forEach(appDoc => {
+                        const data = appDoc.data();
+                        const decrypted = window.decryptData(data.encryptedInfo);
+                        if (data.trainingId === trainingId) {
+                            batch.delete(doc(db, 'applications', appDoc.id));
+                        }
+                    });
+                    
+                    await batch.commit();
+                    await window.loadTrainings();
+                    await window.loadApplications();
+                } else {
+                    window.trainings = window.trainings.filter(t => t.id !== trainingId);
+                    window.applications = window.applications.filter(a => a.trainingId !== trainingId);
+                }
+                
+                hideLoading();
+                showSuccess('교육이 삭제되었습니다.');
+                
+                renderCalendar();
+                renderTrainingList();
+                renderAdminView();
+                
+            } catch (error) {
+                hideLoading();
+                console.error('삭제 실패:', error);
+                alert('삭제 중 오류가 발생했습니다: ' + error.message);
+            }
+        };
+
+        // 엑셀 다운로드
+        window.exportApplicationsToExcel = function() {
+            if (!window.isAdmin) {
+                alert('관리자만 다운로드할 수 있습니다.');
+                return;
+            }
+            
+            if (!window.applications || window.applications.length === 0) {
+                alert('다운로드할 신청자가 없습니다.');
+                return;
+            }
+            
+            const excelData = window.applications.map(app => {
+                const training = window.trainings.find(t => t.id === app.trainingId);
+                return {
+                    '교육명': training ? training.title : '-',
+                    '교육일시': training ? `${training.date} ${training.startTime}` : '-',
+                    '이름': app.name,
+                    '이메일': app.email,
+                    '전화번호': app.phone,
+                    '소속': app.organization || '-',
+                    '직급': app.position || '-',
+                    '특이사항': app.notes || '-',
+                    '신청일': new Date(app.appliedAt).toLocaleDateString('ko-KR')
+                };
+            });
+            
+            const worksheet = XLSX.utils.json_to_sheet(excelData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, '신청자목록');
+            
+            worksheet['!cols'] = [
+                { wch: 25 }, { wch: 18 }, { wch: 10 }, { wch: 25 },
+                { wch: 15 }, { wch: 15 }, { wch: 10 }, { wch: 30 }, { wch: 12 }
+            ];
+            
+            const fileName = `교육신청자목록_${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(workbook, fileName);
+            
+            showSuccess('신청자 목록이 다운로드되었습니다.');
+        };
+
+        console.log('🚀 시스템 준비 완료');
     </script>
 </body>
 </html>
